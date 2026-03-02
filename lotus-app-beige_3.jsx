@@ -647,6 +647,15 @@ function SettingsTab({ profile, setProfile, cycleHistory, ovulationTests, setOvu
     const [testResult, setTestResult] = useState(OVU_TESTS[0]);
     const [testDate, setTestDate] = useState("");
     const [notif, setNotif] = useState({ prePeriod: true, delay: true, ovulation: true });
+    const [profileImg, setProfileImg] = useState(null);
+
+    const handleProfileImg = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => setProfileImg(ev.target.result);
+        reader.readAsDataURL(file);
+    };
 
     const addTest = () => {
         if (!testDate) return;
@@ -669,6 +678,42 @@ function SettingsTab({ profile, setProfile, cycleHistory, ovulationTests, setOvu
             {/* Profile */}
             <Card>
                 <SLabel>👤 الملف الشخصي</SLabel>
+
+                {/* Profile Avatar */}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 18 }}>
+                    <label style={{ cursor: "pointer", position: "relative" }}>
+                        <input type="file" accept="image/*" onChange={handleProfileImg} style={{ display: "none" }} />
+                        <div style={{
+                            width: 90, height: 90, borderRadius: "50%",
+                            background: profileImg ? `url(${profileImg}) center/cover no-repeat` : `linear-gradient(145deg, ${T.rose}44, ${T.plum}44, ${T.amber}33)`,
+                            border: `3px solid ${T.rose}66`,
+                            boxShadow: `0 4px 20px ${T.rose}22, 0 0 0 4px ${T.roseBg}`,
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            transition: "all 0.3s",
+                            overflow: "hidden",
+                        }}>
+                            {!profileImg && (
+                                <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="8" r="4" fill={T.rose} opacity="0.7" />
+                                    <path d="M4 20c0-3.3 2.7-6 6-6h4c3.3 0 6 2.7 6 6" stroke={T.rose} strokeWidth="1.5" fill={T.rose} opacity="0.35" strokeLinecap="round" />
+                                </svg>
+                            )}
+                        </div>
+                        {/* Camera badge */}
+                        <div style={{
+                            position: "absolute", bottom: 0, right: 0,
+                            width: 28, height: 28, borderRadius: "50%",
+                            background: T.rose, border: `2px solid ${T.cream}`,
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                        }}>
+                            <span style={{ fontSize: 14 }}>📷</span>
+                        </div>
+                    </label>
+                    <p style={{ color: T.textMid, fontSize: 12, marginTop: 8, fontWeight: 600 }}>
+                        {profile.name || "اضغطي لإضافة صورتك"}
+                    </p>
+                </div>
                 {[{ label: "الاسم", key: "name", type: "text", ph: "اسمك" }, { label: "العمر", key: "age", type: "number", ph: "عمرك" }].map(f => (
                     <div key={f.key}>
                         <p style={{ fontSize: 11, color: T.textDim }}>{f.label}</p>
